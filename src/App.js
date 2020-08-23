@@ -16,7 +16,7 @@ const App = () => {
 
   return (
     <div className={classes.app} id={'app'}>
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <Navigation/>
         <div>
           <Route exact path={'/orders'}>

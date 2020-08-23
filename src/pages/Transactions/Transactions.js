@@ -14,7 +14,7 @@ import useAPI from '../../hooks/useAPI';
 const Transactions = () => {
   const theme = useTheme();
 
-  const transactionsAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/transactions`, config));
+  const transactionsAPI = useAPI((config) => axios.get(`https://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/transactions`, config));
 
   if (transactionsAPI.response) {
     return (

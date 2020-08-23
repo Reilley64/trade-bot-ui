@@ -12,7 +12,7 @@ import useAPI from '../hooks/useAPI';
 const Orders = () => {
   const theme = useTheme();
 
-  const ordersAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/orders`, config));
+  const ordersAPI = useAPI((config) => axios.get(`https://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/orders`, config));
 
   if (ordersAPI.response) {
     return (
