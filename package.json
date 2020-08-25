@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@nivo/line": "^0.62.0",
+    "@nivo/pie": "^0.62.0",
     "axios": "^0.20.0",
     "clsx": "^1.1.1",
     "formik": "^2.1.5",
     "moment": "^2.27.0",
+    "nivo": "^0.31.0",
     "numeral": "^2.0.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

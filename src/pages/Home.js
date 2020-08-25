@@ -1,11 +1,11 @@
+import { ResponsiveLine } from '@nivo/line';
+import { ResponsivePie } from '@nivo/pie';
 import axios from 'axios';
 import moment from 'moment';
-import numeral from 'numeral';
 import React from 'react';
 import {
   Col, Grid, Page, useTheme,
 } from 'reilleykit';
-import { VictoryChart, VictoryLine, VictoryPie } from 'victory';
 
 import useAPI from '../hooks/useAPI';
 
@@ -18,29 +18,44 @@ const Home = () => {
     return (
       <Page id={'transactions'}>
         <Grid style={{ justifyContent: 'center' }}>
-          <Col size={3}>
-            <VictoryChart>
-              <VictoryLine
-                data={snapshotsAPI.response.data.map((datum) => ({ x: moment(datum.createdAt).format('DD/MM/YYYY'), y: (datum.xrp * datum.xrpusdtRate) + datum.usdt })).reverse()}
-                style={{ data: { stroke: theme.palette.primary.main } }}
+          <Col size={4}>
+            <div style={{ height: '400px' }}>
+              <ResponsiveLine
+                colors={[theme.palette.primary.main]}
+                data={[{ id: 'valuation', data: snapshotsAPI.response.data.map((datum) => ({ x: moment(datum.createdAt).format('DD/MM/YYYY'), y: (parseFloat(datum.xrp) * parseFloat(datum.xrpusdtRate)) + parseFloat(datum.usdt) })).reverse() }]}
+                margin={{
+                  top: 50, right: 110, bottom: 50, left: 60,
+                }}
+                xScale={{ type: 'point' }}
+                yScale={{ type: 'linear', max: 'auto', min: 'auto' }}
               />
-            </VictoryChart>
+            </div>
           </Col>
-          <Col size={3}>
-            <VictoryPie
-              colorScale={[theme.palette.primary.main, theme.palette.primary.light]}
-              data={[
-                { x: 'usdt', y: parseFloat(snapshotsAPI.response.data[0].usdt) },
-                { x: 'xrp', y: parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate) },
-              ]}
-              height={260}
-              innerRadius={70}
-              labels={({ datum }) => (datum.y > 0 ? [`${numeral((datum.y / (parseFloat(snapshotsAPI.response.data[0].usdt) + parseFloat(snapshotsAPI.response.data[0].xrp))) * 100).format('0,0.00')}%`, datum.x] : null)}
-              style={[
-                { fontSize: '1rem' },
-                { fill: theme.palette.text.base, fontSize: '.75rem' },
-              ]}
-            />
+          <Col size={4}>
+            <div style={{ height: '400px' }}>
+              <ResponsivePie
+                animate
+                colors={[theme.palette.primary.main, theme.palette.primary.light]}
+                data={[
+                  {
+                    id: 'xrp',
+                    label: 'Ripple',
+                    value: snapshotsAPI.response.data[0].xrp * snapshotsAPI.response.data[0].xrpusdtRate,
+                  },
+                  {
+                    id: 'usdt',
+                    label: 'Tether',
+                    value: snapshotsAPI.response.data[0].usdt,
+                  },
+                ]}
+                enableSlicesLabels={false}
+                innerRadius={0.75}
+                margin={{
+                  top: 40, right: 80, bottom: 80, left: 80,
+                }}
+                radialLabel={(d) => `${d.label} ($${parseFloat(d.value)}USDT)`}
+              />
+            </div>
           </Col>
         </Grid>
       </Page>
