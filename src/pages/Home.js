@@ -21,7 +21,7 @@ const Home = () => {
           <Col size={3}>
             <VictoryChart>
               <VictoryLine
-                data={snapshotsAPI.response.data.map((datum) => ({ x: moment(datum.createdAt).format('DD/MM/YYYY'), y: datum.xrp + datum.usdt })).reverse()}
+                data={snapshotsAPI.response.data.map((datum) => ({ x: moment(datum.createdAt).format('DD/MM/YYYY'), y: (datum.xrp * datum.xrpusdtRate) + datum.usdt })).reverse()}
                 style={{ data: { stroke: theme.palette.primary.main } }}
               />
             </VictoryChart>
@@ -31,7 +31,7 @@ const Home = () => {
               colorScale={[theme.palette.primary.main, theme.palette.primary.light]}
               data={[
                 { x: 'usdt', y: parseFloat(snapshotsAPI.response.data[0].usdt) },
-                { x: 'xrp', y: parseFloat(snapshotsAPI.response.data[0].xrp) },
+                { x: 'xrp', y: parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate) },
               ]}
               height={260}
               innerRadius={70}

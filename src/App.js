@@ -6,10 +6,8 @@ import { useTheme } from 'reilleykit';
 
 import useStyles from './App.styles';
 import Navigation from './Navigation';
-import Orders from './pages/Orders';
-import NewTransaction from './pages/Transactions/New/NewTransaction';
-import Transactions from './pages/Transactions/Transactions';
-import Home from "./pages/Home";
+import Home from './pages/Home';
+import Trades from './pages/Trades';
 
 const App = () => {
   const theme = useTheme();
@@ -20,14 +18,8 @@ const App = () => {
       <Router>
         <Navigation/>
         <div>
-          <Route exact path={'/orders'}>
-            <Orders/>
-          </Route>
-          <Route exact path={'/transactions/new'}>
-            <NewTransaction/>
-          </Route>
-          <Route exact path={'/transactions'}>
-            <Transactions/>
+          <Route exact path={'/trades'}>
+            <Trades/>
           </Route>
           <Route exact path={'/'}>
             <Home/>

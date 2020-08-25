@@ -47,10 +47,7 @@ const Navigation = () => {
       <Link className={classes.navbarBrand} to={'/'}>Trade Bot</Link>
       <ul className={classes.navbarNav}>
         <li>
-          <NavLink className={classes.navbarNavLink} to={'/orders'}>Orders</NavLink>
-        </li>
-        <li>
-          <NavLink className={classes.navbarNavLink} to={'/transactions'}>Transactions</NavLink>
+          <NavLink className={classes.navbarNavLink} to={'/trades'}>Trades</NavLink>
         </li>
       </ul>
     </div>
