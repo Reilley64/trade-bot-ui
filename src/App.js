@@ -9,6 +9,7 @@ import Navigation from './Navigation';
 import Orders from './pages/Orders';
 import NewTransaction from './pages/Transactions/New/NewTransaction';
 import Transactions from './pages/Transactions/Transactions';
+import Home from "./pages/Home";
 
 const App = () => {
   const theme = useTheme();
@@ -16,7 +17,7 @@ const App = () => {
 
   return (
     <div className={classes.app} id={'app'}>
-      <Router basename={process.env.PUBLIC_URL}>
+      <Router>
         <Navigation/>
         <div>
           <Route exact path={'/orders'}>
@@ -27,6 +28,9 @@ const App = () => {
           </Route>
           <Route exact path={'/transactions'}>
             <Transactions/>
+          </Route>
+          <Route exact path={'/'}>
+            <Home/>
           </Route>
         </div>
       </Router>

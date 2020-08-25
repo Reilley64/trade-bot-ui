@@ -13,7 +13,7 @@ import useAPI from '../../../hooks/useAPI';
 const NewTransaction = () => {
   const history = useHistory();
 
-  const transactionAPI = useAPI((config, data = {}) => axios.post(`https://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/transactions`, data, config), false);
+  const transactionAPI = useAPI((config, data = {}) => axios.post(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/transactions`, data, config), false);
 
   useEffect(() => {
     if (transactionAPI.response && !transactionAPI.loading) history.push('/transactions');

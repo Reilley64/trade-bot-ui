@@ -2,7 +2,6 @@
   "name": "trade-bot-ui",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://reilley64.github.io/trade-bot-ui",
   "dependencies": {
     "axios": "^0.20.0",
     "clsx": "^1.1.1",
@@ -16,7 +15,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "reilleykit": "git+ssh://git@github.com/reilley64/reilleykit.git",
-    "sanitize.css": "^12.0.1"
+    "sanitize.css": "^12.0.1",
+    "victory": "^35.0.8"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
@@ -35,9 +35,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

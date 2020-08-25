@@ -3,6 +3,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import React from 'react';
 import {
+  Button,
   Col, Grid, Page, useTheme,
 } from 'reilleykit';
 
@@ -12,7 +13,7 @@ import useAPI from '../hooks/useAPI';
 const Orders = () => {
   const theme = useTheme();
 
-  const ordersAPI = useAPI((config) => axios.get(`https://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/orders`, config));
+  const ordersAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/orders`, config));
 
   if (ordersAPI.response) {
     return (
@@ -38,7 +39,7 @@ const Orders = () => {
                 {
                   accessor: 'price',
                   header: 'Price',
-                  Cell: ({ value }) => numeral(value).format('$0,0.00'),
+                  Cell: ({ value }) => value,
                 },
                 {
                   accessor: 'quantity',
@@ -46,11 +47,16 @@ const Orders = () => {
                 },
                 {
                   header: 'Total',
-                  Cell: ({ values }) => numeral((values.price) * values.quantity).format('$0,0.00'),
+                  Cell: ({ values }) => numeral((parseFloat(values.price) * parseFloat(values.quantity)) + parseFloat(values.fee)).format('$0,0.00'),
                 },
               ]}
               data={ordersAPI.response.data}
             />
+          </Col>
+          <Col size={12}>
+            <Button loading={ordersAPI.loading} onClick={() => ordersAPI.fetch()} style={{ marginRight: '.5rem' }}>
+              Refresh
+            </Button>
           </Col>
         </Grid>
       </Page>
