@@ -4,7 +4,7 @@ const useStyles = createUseStyles({
   app: ({ theme }) => ({
     backgroundColor: theme.palette.background.main,
     color: theme.palette.text.base,
-    fontFamily: '-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,Oxygen,Ubuntu,\'Fira Sans\',\'Droid Sans\',\'Helvetica Neue\',sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Oxygen, Ubuntu, \'Fira Sans\', \'Droid Sans\', \'Helvetica Neue\', sans-serif',
     fontSize: '1rem',
     fontWeight: 400,
     minHeight: '100vh',
