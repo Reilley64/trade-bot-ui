@@ -4,6 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import numeral from 'numeral';
 import React from 'react';
+import { ArrowDownRight, ArrowUpRight } from 'react-bootstrap-icons';
 import {
   Card, Col, Grid, Page, useTheme,
 } from 'reilleykit';
@@ -15,6 +16,8 @@ import useAPI from '../hooks/useAPI';
 const Home = () => {
   const theme = useTheme();
 
+  const isPortrait = window.innerHeight > window.innerWidth;
+
   const binanceAPI = useAPI((config) => axios.get('https://api.binance.com/api/v3/ticker/24hr?symbol=XRPUSDT', config));
   const snapshotsAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/snapshots`, config));
   const tradesAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/trades`, config));
@@ -25,7 +28,7 @@ const Home = () => {
     return (
       <Page id={'transactions'}>
         <Grid>
-          <Col size={5}>
+          <Col size={isPortrait ? 12 : 5}>
             <Grid nested>
               <Col size={12}>
                 <Card>
@@ -55,10 +58,22 @@ const Home = () => {
                         radialLabelsLinkColor={theme.palette.text.muted}
                         radialLabelsTextColor={theme.palette.text.base}
                       />
-                      <div style={{ alignSelf: 'center', justifySelf: 'center', position: 'absolute' }}>
+                      <div style={{
+                        alignSelf: 'center', justifySelf: 'center', position: 'absolute', textAlign: 'center',
+                      }}>
                         <span style={{ fontSize: '1.5rem', fontWeight: '700' }}>
                           {numeral((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)).format('0,0.00')}
                           <small> USDT</small>
+                        </span><br/>
+                        <span
+                          style={{
+                            color: ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)) - ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[1].usdt)) > 0
+                              ? theme.palette.success.main
+                              : theme.palette.danger.main,
+                          }}
+                        >
+                          {((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)) - ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[1].usdt)) > 0 ? <ArrowUpRight/> : <ArrowDownRight/>}
+                          {' '}{numeral(((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)) - ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[1].usdt))).format('0,0.00')}
                         </span>
                       </div>
                     </div>
@@ -87,21 +102,23 @@ const Home = () => {
               </Col>
             </Grid>
           </Col>
-          <Col size={7}>
+          <Col size={isPortrait ? 12 : 7}>
             <Grid nested>
-              <Col size={2.4}>
-                <Card>
-                  <CardBody>
+              {!isPortrait
+              && <>
+                <Col size={2.4}>
+                  <Card>
+                    <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Latest</small><br/>
                       {binanceAPI.response.data.lastPrice}<small> USDT</small>
                     </span>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col size={2.4}>
-                <Card style={{ height: '100%' }}>
-                  <CardBody>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col size={2.4}>
+                  <Card style={{ height: '100%' }}>
+                    <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Change</small><br/>
                       <span
@@ -115,39 +132,41 @@ const Home = () => {
                         <small> USDT</small>
                       </span>
                     </span>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col size={2.4}>
-                <Card>
-                  <CardBody>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col size={2.4}>
+                  <Card>
+                    <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>High</small><br/>
                       {binanceAPI.response.data.highPrice}<small> USDT</small>
                     </span>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col size={2.4}>
-                <Card>
-                  <CardBody>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col size={2.4}>
+                  <Card>
+                    <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Low</small><br/>
                       {binanceAPI.response.data.lowPrice}<small> USDT</small>
                     </span>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col size={2.4}>
-                <Card>
-                  <CardBody>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col size={2.4}>
+                  <Card>
+                    <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Volume</small><br/>
-                      {parseInt(binanceAPI.response.data.volume)}
+                      {parseInt(binanceAPI.response.data.volume, 10)}
                     </span>
-                  </CardBody>
-                </Card>
-              </Col>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </>
+              }
               <Col size={12}>
                 <Card>
                   <CardBody>
