@@ -5,13 +5,12 @@
       "jsx": true
     }
   },
-  "extends": ["airbnb-base", "react-app"],
+  "extends": ["airbnb"],
   "env": {
     "browser": true,
     "node": true,
     "jest": true
   },
-  "plugins": ["react", "react-hooks"],
   "rules": {
     "import/order": [
       "warn",
@@ -26,7 +25,9 @@
     ],
     "import/prefer-default-export": "off",
     "max-len": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/jsx-sort-props": "warn",
+    "react/prop-types": "off",
     "react-hooks/exhaustive-deps": "off"
   }
 }

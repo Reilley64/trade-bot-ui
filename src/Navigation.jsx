@@ -23,7 +23,7 @@ const Navigation = () => {
 
   return (
     <div className={classes.navbar}>
-      <Link className={classes.navbarBrand} to={'/'}>Trade Bot</Link>
+      <Link className={classes.navbarBrand} to="/">Trade Bot</Link>
     </div>
   );
 };

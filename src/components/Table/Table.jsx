@@ -12,9 +12,9 @@ const Table = ({
     let final = dat;
     const split = accessor.split('.');
 
-    for (const spli of split) {
+    split.forEach((spli) => {
       final = final[spli];
-    }
+    });
 
     return final;
   };
@@ -29,27 +29,27 @@ const Table = ({
         }}
       >
         <thead style={{ borderBottom: '.125rem solid', borderColor: theme.palette.border.main }}>
-        <tr>
-          {columns.map((column) => (
-            <th
-              key={column.accessor}
-              style={{
-                padding: '.25rem .5rem',
-                border: 'medium none',
-                color: theme.palette.text.muted,
-                boxSizing: 'border-box',
-                fontSize: '.75rem',
-                fontWeight: '600',
-                position: 'relative',
-                textAlign: 'left',
-                verticalAlign: 'top',
-                ...column.headerStyle || {},
-              }}
-            >
-              {column.header ? column.header : null}
-            </th>
-          ))}
-        </tr>
+          <tr>
+            {columns.map((column) => (
+              <th
+                key={column.accessor}
+                style={{
+                  padding: '.25rem .5rem',
+                  border: 'medium none',
+                  color: theme.palette.text.muted,
+                  boxSizing: 'border-box',
+                  fontSize: '.75rem',
+                  fontWeight: '600',
+                  position: 'relative',
+                  textAlign: 'left',
+                  verticalAlign: 'top',
+                  ...column.headerStyle || {},
+                }}
+              >
+                {column.header ? column.header : null}
+              </th>
+            ))}
+          </tr>
         </thead>
         <tbody
           style={{
@@ -58,8 +58,9 @@ const Table = ({
             verticalAlign: 'top',
           }}
         >
-        {data.length === 0
-        && <tr>
+          {data.length === 0
+        && (
+        <tr>
           <td
             colSpan={columns.length}
             style={{
@@ -75,13 +76,13 @@ const Table = ({
             Nothing to see here
           </td>
         </tr>
-        }
-        {data.map((dat, rowIndex) => (
-          <tr key={dat[dataKey]}>
-            {columns.map((column) => (
-              <td
-                key={column.accessor}
-                style={
+        )}
+          {data.map((dat, rowIndex) => (
+            <tr key={dat[dataKey]}>
+              {columns.map((column) => (
+                <td
+                  key={column.accessor}
+                  style={
                   column.cellStyle
                   || {
                     overflow: 'hidden',
@@ -91,25 +92,25 @@ const Table = ({
                     padding: '4px 8px',
                     textAlign: 'left',
                     verticalAlign: 'middle',
-                  }}
-              >
-                {column.Cell
-                  ? column.Cell({
-                    rowIndex,
-                    value: column.accessor
-                      ? access(dat, column.accessor)
-                      : null,
-                    values: dat,
-                  })
-                  : access(dat, column.accessor)
-                }
-              </td>
-            ))}
-          </tr>
-        ))}
+                  }
+}
+                >
+                  {column.Cell
+                    ? column.Cell({
+                      rowIndex,
+                      value: column.accessor
+                        ? access(dat, column.accessor)
+                        : null,
+                      values: dat,
+                    })
+                    : access(dat, column.accessor)}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
-      {api && <Pagination api={api} style={{ marginTop: '1rem' }}/>}
+      {api && <Pagination api={api} style={{ marginTop: '1rem' }} />}
     </>
   );
 };

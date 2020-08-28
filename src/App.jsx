@@ -13,12 +13,12 @@ const App = () => {
   const classes = useStyles({ theme });
 
   return (
-    <div className={classes.app} id={'app'}>
+    <div className={classes.app} id="app">
       <Router>
-        <Navigation/>
+        <Navigation />
         <div>
-          <Route exact path={'/'}>
-            <Home/>
+          <Route exact path="/">
+            <Home />
           </Route>
         </div>
       </Router>

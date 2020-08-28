@@ -22,11 +22,14 @@ const Home = () => {
   const snapshotsAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/snapshots`, config));
   const tradesAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/trades`, config));
 
-  const response = binanceAPI.response && tradesAPI.response && snapshotsAPI.response;
+  const xrpBalanceAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/asset-holdings/xrp`, config));
+  const usdtBalanceAPI = useAPI((config) => axios.get(`http://${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/asset-holdings/usdt`, config));
+
+  const response = binanceAPI.response && tradesAPI.response && snapshotsAPI.response && xrpBalanceAPI.response && usdtBalanceAPI.response;
 
   if (response) {
     return (
-      <Page id={'transactions'}>
+      <Page id="transactions">
         <Grid>
           <Col size={isPortrait ? 12 : 5}>
             <Grid nested>
@@ -44,12 +47,12 @@ const Home = () => {
                           {
                             id: 'xrp',
                             label: 'Ripple',
-                            value: snapshotsAPI.response.data[0].xrp * snapshotsAPI.response.data[0].xrpusdtRate,
+                            value: xrpBalanceAPI.response.data.balance * binanceAPI.response.data.lastPrice,
                           },
                           {
                             id: 'usdt',
                             label: 'Tether',
-                            value: snapshotsAPI.response.data[0].usdt,
+                            value: usdtBalanceAPI.response.data.balance,
                           },
                         ]}
                         enableSlicesLabels={false}
@@ -60,20 +63,23 @@ const Home = () => {
                       />
                       <div style={{
                         alignSelf: 'center', justifySelf: 'center', position: 'absolute', textAlign: 'center',
-                      }}>
+                      }}
+                      >
                         <span style={{ fontSize: '1.5rem', fontWeight: '700' }}>
-                          {numeral((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)).format('0,0.00')}
+                          {numeral((parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice)) + parseFloat(usdtBalanceAPI.response.data.balance)).format('0,0.00')}
                           <small> USDT</small>
-                        </span><br/>
+                        </span>
+                        <br />
                         <span
                           style={{
-                            color: ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)) - ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[1].usdt)) > 0
+                            color: ((parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice)) + parseFloat(usdtBalanceAPI.response.data.balance)) - ((parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].xrp) * parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].usdt)) > 0
                               ? theme.palette.success.main
                               : theme.palette.danger.main,
                           }}
                         >
-                          {((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)) - ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[1].usdt)) > 0 ? <ArrowUpRight/> : <ArrowDownRight/>}
-                          {' '}{numeral(((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[0].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[0].usdt)) - ((parseFloat(snapshotsAPI.response.data[0].xrp) * parseFloat(snapshotsAPI.response.data[1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[1].usdt))).format('0,0.00')}
+                          {((parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice)) + parseFloat(usdtBalanceAPI.response.data.balance)) - ((parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].xrp) * parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].usdt)) > 0 ? <ArrowUpRight /> : <ArrowDownRight />}
+                          {' '}
+                          {numeral(((parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice)) + parseFloat(usdtBalanceAPI.response.data.balance)) - ((parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].xrp) * parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].xrpusdtRate)) + parseFloat(snapshotsAPI.response.data[snapshotsAPI.response.data.length - 1].usdt))).format('0,0.00')}
                         </span>
                       </div>
                     </div>
@@ -89,9 +95,17 @@ const Home = () => {
                     <div style={{ height: '300px' }}>
                       <ResponsiveLine
                         colors={[theme.palette.primary.main]}
-                        data={[{ id: 'valuation', data: snapshotsAPI.response.data.map((datum) => ({ x: moment(datum.createdAt).format('DD/MM/YYYY'), y: (parseFloat(datum.xrp) * parseFloat(datum.xrpusdtRate)) + parseFloat(datum.usdt) })).reverse() }]}
+                        data={[
+                          {
+                            id: 'valuation',
+                            data: [
+                              ...snapshotsAPI.response.data.map((datum) => ({ x: moment(datum.createdAt).format('DD/MM/YYYY HH:MM'), y: (parseFloat(datum.xrp) * parseFloat(datum.xrpusdtRate)) + parseFloat(datum.usdt) })),
+                              { x: moment().format('DD/MM/YYYY HH:MM'), y: (parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice)) + parseFloat(usdtBalanceAPI.response.data.balance) },
+                            ],
+                          },
+                        ]}
                         margin={{
-                          bottom: 60, left: 60,
+                          bottom: 60, left: 60, right: 60, top: 60,
                         }}
                         xScale={{ type: 'point' }}
                         yScale={{ type: 'linear', max: 'auto', min: 'auto' }}
@@ -105,68 +119,78 @@ const Home = () => {
           <Col size={isPortrait ? 12 : 7}>
             <Grid nested>
               {!isPortrait
-              && <>
+              && (
+              <>
                 <Col size={2.4}>
                   <Card>
                     <CardBody>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                      <small>Latest</small><br/>
-                      {numeral(binanceAPI.response.data.lastPrice).format('0,0.00000')}<small> USDT</small>
-                    </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                        <small>Latest</small>
+                        <br />
+                        {numeral(binanceAPI.response.data.lastPrice).format('0,0.00000')}
+                        <small> USDT</small>
+                      </span>
                     </CardBody>
                   </Card>
                 </Col>
                 <Col size={2.4}>
                   <Card style={{ height: '100%' }}>
                     <CardBody>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                      <small>Change</small><br/>
-                      <span
-                        style={{
-                          color: binanceAPI.response.data.priceChange > 0
-                            ? theme.palette.success.main
-                            : theme.palette.danger.main,
-                        }}
-                      >
-                        {numeral(binanceAPI.response.data.priceChange).format('0,0.00000')}
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                        <small>Change</small>
+                        <br />
+                        <span
+                          style={{
+                            color: binanceAPI.response.data.priceChange > 0
+                              ? theme.palette.success.main
+                              : theme.palette.danger.main,
+                          }}
+                        >
+                          {numeral(binanceAPI.response.data.priceChange).format('0,0.00000')}
+                          <small> USDT</small>
+                        </span>
+                      </span>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col size={2.4}>
+                  <Card>
+                    <CardBody>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                        <small>High</small>
+                        <br />
+                        {numeral(binanceAPI.response.data.highPrice).format('0,0.00000')}
                         <small> USDT</small>
                       </span>
-                    </span>
                     </CardBody>
                   </Card>
                 </Col>
                 <Col size={2.4}>
                   <Card>
                     <CardBody>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                      <small>High</small><br/>
-                      {numeral(binanceAPI.response.data.highPrice).format('0,0.00000')}<small> USDT</small>
-                    </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                        <small>Low</small>
+                        <br />
+                        {numeral(binanceAPI.response.data.lowPrice).format('0,0.00000')}
+                        <small> USDT</small>
+                      </span>
                     </CardBody>
                   </Card>
                 </Col>
                 <Col size={2.4}>
                   <Card>
                     <CardBody>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                      <small>Low</small><br/>
-                      {numeral(binanceAPI.response.data.lowPrice).format('0,0.00000')}<small> USDT</small>
-                    </span>
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col size={2.4}>
-                  <Card>
-                    <CardBody>
-                    <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
-                      <small>Volume</small><br/>
-                      {numeral(binanceAPI.response.data.quoteVolume).format('0,0')}<small> USDT</small>
-                    </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                        <small>Volume</small>
+                        <br />
+                        {numeral(binanceAPI.response.data.quoteVolume).format('0,0')}
+                        <small> USDT</small>
+                      </span>
                     </CardBody>
                   </Card>
                 </Col>
               </>
-              }
+              )}
               <Col size={12}>
                 <Card>
                   <CardBody>
