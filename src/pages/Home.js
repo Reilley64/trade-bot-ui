@@ -111,7 +111,7 @@ const Home = () => {
                     <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Latest</small><br/>
-                      {binanceAPI.response.data.lastPrice}<small> USDT</small>
+                      {numeral(binanceAPI.response.data.lastPrice).format('0,0.00000')}<small> USDT</small>
                     </span>
                     </CardBody>
                   </Card>
@@ -128,7 +128,7 @@ const Home = () => {
                             : theme.palette.danger.main,
                         }}
                       >
-                        {binanceAPI.response.data.priceChange}
+                        {numeral(binanceAPI.response.data.priceChange).format('0,0.00000')}
                         <small> USDT</small>
                       </span>
                     </span>
@@ -140,7 +140,7 @@ const Home = () => {
                     <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>High</small><br/>
-                      {binanceAPI.response.data.highPrice}<small> USDT</small>
+                      {numeral(binanceAPI.response.data.highPrice).format('0,0.00000')}<small> USDT</small>
                     </span>
                     </CardBody>
                   </Card>
@@ -150,7 +150,7 @@ const Home = () => {
                     <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Low</small><br/>
-                      {binanceAPI.response.data.lowPrice}<small> USDT</small>
+                      {numeral(binanceAPI.response.data.lowPrice).format('0,0.00000')}<small> USDT</small>
                     </span>
                     </CardBody>
                   </Card>
@@ -160,7 +160,7 @@ const Home = () => {
                     <CardBody>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>
                       <small>Volume</small><br/>
-                      {parseInt(binanceAPI.response.data.volume, 10)}
+                      {numeral(binanceAPI.response.data.quoteVolume).format('0,0')}<small> USDT</small>
                     </span>
                     </CardBody>
                   </Card>
@@ -191,14 +191,16 @@ const Home = () => {
                         {
                           accessor: 'rate',
                           header: 'Rate',
+                          Cell: ({ value }) => numeral(value).format('0,0.00000'),
                         },
                         {
                           accessor: 'quantity',
-                          header: 'Quantity',
+                          header: 'Price',
+                          Cell: ({ value }) => numeral(value).format('0,0.0000'),
                         },
                         {
-                          header: 'Total',
-                          Cell: ({ values }) => (values.quantity / values.rate) - values.fee,
+                          header: 'Amount',
+                          Cell: ({ values }) => numeral((values.quantity / values.rate) - values.fee).format('0,0.00'),
                         },
                       ]}
                       data={tradesAPI.response.data}
