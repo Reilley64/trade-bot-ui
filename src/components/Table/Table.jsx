@@ -1,116 +1,75 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'react-bootstrap-icons';
 import { useTheme } from 'reilleykit';
 
-import Pagination from '../Pagination/Pagination';
+import useStyles from './Table.styles';
+
+import { resolveProperty } from '../../common';
 
 const Table = ({
-  api, columns, data, dataKey,
+  columns, data, dataKey, sortBy,
 }) => {
   const theme = useTheme();
+  const classes = useStyles({ theme });
 
-  const access = (dat, accessor) => {
-    let final = dat;
-    const split = accessor.split('.');
-
-    split.forEach((spli) => {
-      final = final[spli];
-    });
-
-    return final;
-  };
+  const [sortByState, setSortByState] = useState(sortBy);
 
   return (
     <>
-      <table
-        style={{
-          tableLayout: 'fixed',
-          borderCollapse: 'collapse',
-          width: '100%',
-        }}
-      >
-        <thead style={{ borderBottom: '.125rem solid', borderColor: theme.palette.border.main }}>
+      <table className={classes.table}>
+        <thead className={classes.tableHead}>
           <tr>
             {columns.map((column) => (
               <th
                 key={column.accessor}
-                style={{
-                  padding: '.25rem .5rem',
-                  border: 'medium none',
-                  color: theme.palette.text.muted,
-                  boxSizing: 'border-box',
-                  fontSize: '.75rem',
-                  fontWeight: '600',
-                  position: 'relative',
-                  textAlign: 'left',
-                  verticalAlign: 'top',
-                  ...column.headerStyle || {},
-                }}
+                className={classes.tableHeader}
+                onClick={() => setSortByState({ field: column.accessor, desc: sortByState.field === column.accessor ? !sortByState.desc : false })}
+                style={column.headerStyle}
               >
                 {column.header ? column.header : null}
+                {column.accessor === sortByState.field
+                && (
+                <>
+                  {' '}
+                  {sortByState.desc ? <ChevronDown /> : <ChevronUp />}
+                </>
+                )}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody
-          style={{
-            borderBottom: '.125rem solid',
-            borderColor: theme.palette.border.main,
-            verticalAlign: 'top',
-          }}
-        >
+        <tbody className={classes.tableBody}>
           {data.length === 0
-        && (
-        <tr>
-          <td
-            colSpan={columns.length}
-            style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              border: 'medium none',
-              padding: '4px 8px',
-              textAlign: 'left',
-              verticalAlign: 'middle',
-            }}
-          >
-            Nothing to see here
-          </td>
-        </tr>
-        )}
-          {data.map((dat, rowIndex) => (
-            <tr key={dat[dataKey]}>
+          && (
+          <tr>
+            <td className={classes.tableData} colSpan={columns.length}>
+              Nothing to see here
+            </td>
+          </tr>
+          )}
+          {data.sort((a, b) => {
+            if (resolveProperty(a, sortByState.field) < resolveProperty(b, sortByState.field)) return sortByState.desc ? 1 : -1;
+            if (resolveProperty(a, sortByState.field) > resolveProperty(b, sortByState.field)) return sortByState.desc ? -1 : 1;
+            return 0;
+          }).map((datum, rowIndex) => (
+            <tr key={datum[dataKey]}>
               {columns.map((column) => (
-                <td
-                  key={column.accessor}
-                  style={
-                  column.cellStyle
-                  || {
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    border: 'medium none',
-                    padding: '4px 8px',
-                    textAlign: 'left',
-                    verticalAlign: 'middle',
-                  }
-}
-                >
+                <td key={column.accessor} className={classes.tableData} style={column.cellStyle}>
                   {column.Cell
                     ? column.Cell({
                       rowIndex,
                       value: column.accessor
-                        ? access(dat, column.accessor)
+                        ? resolveProperty(datum, column.accessor)
                         : null,
-                      values: dat,
+                      values: datum,
                     })
-                    : access(dat, column.accessor)}
+                    : resolveProperty(datum, column.accessor)}
                 </td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
-      {api && <Pagination api={api} style={{ marginTop: '1rem' }} />}
     </>
   );
 };

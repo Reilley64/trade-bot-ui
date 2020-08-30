@@ -1,6 +1,5 @@
 import React from 'react';
 import { createUseStyles } from 'react-jss';
-import { Link } from 'react-router-dom';
 
 const useStyles = createUseStyles({
   navbar: {
@@ -23,7 +22,7 @@ const Navigation = () => {
 
   return (
     <div className={classes.navbar}>
-      <Link className={classes.navbarBrand} to="/">Trade Bot</Link>
+      <span className={classes.navbarBrand}>Trade Bot</span>
     </div>
   );
 };
