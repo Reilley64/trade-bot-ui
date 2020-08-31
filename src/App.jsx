@@ -54,12 +54,12 @@ const App = () => {
                             {
                               id: 'xrp',
                               label: 'Ripple',
-                              value: xrpBalanceAPI.response.data.balance * binanceAPI.response.data.lastPrice,
+                              value: parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice),
                             },
                             {
                               id: 'usdt',
                               label: 'Tether',
-                              value: usdtBalanceAPI.response.data.balance,
+                              value: parseFloat(usdtBalanceAPI.response.data.balance),
                             },
                           ]}
                           enableSlicesLabels={false}
@@ -102,26 +102,35 @@ const App = () => {
                       </h5>
                       <div style={{ height: '300px' }}>
                         <ResponsiveLine
+                          axisBottom={{
+                            format: '%d/%m/%Y', tickValues: 5,
+                          }}
                           colors={[theme.palette.primary.main]}
                           data={[
                             {
                               id: 'valuation',
                               data: [
                                 ...snapshotsAPI.response.data.map((datum) => ({
-                                  x: moment(datum.createdAt).format('DD/MM/YYYY HH:mm'),
+                                  x: moment(datum.createdAt).format('YYYY-MM-DD HH:mm:ss'),
                                   y: (parseFloat(datum.xrp) * parseFloat(datum.xrpusdtRate)) + parseFloat(datum.usdt),
                                 })),
                                 {
-                                  x: moment().format('DD/MM/YYYY HH:mm'),
+                                  x: moment().format('YYYY-MM-DD HH:mm:ss'),
                                   y: (parseFloat(xrpBalanceAPI.response.data.balance) * parseFloat(binanceAPI.response.data.lastPrice)) + parseFloat(usdtBalanceAPI.response.data.balance),
                                 },
                               ],
                             },
                           ]}
+                          enableCrosshair={false}
                           margin={{
-                            bottom: 60, left: 60, right: 60, top: 60,
+                            bottom: 60, left: 60, right: 30, top: 30,
                           }}
-                          xScale={{ type: 'point' }}
+                          useMesh
+                          xFormat="time:%d/%m/%Y %H:%M"
+                          xScale={{
+                            type: 'time', format: '%Y-%m-%d %H:%M:%S', precision: 'second', useUTC: false,
+                          }}
+                          yFormat=".2f"
                           yScale={{ type: 'linear', max: 'auto', min: 'auto' }}
                         />
                       </div>
